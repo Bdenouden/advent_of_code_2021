@@ -31,7 +31,7 @@ class Board:
             if(self.marked.get((x2,foundNum['y']), False)):
                 xsum += 1
         for y2 in range(0,5):
-            if(self.marked.get((foundNum['y'],y2), False)):
+            if(self.marked.get((foundNum['x'],y2), False)):
                 ysum += 1
             # check if all vertical and horizontal rows for this number are checked
         return (xsum == 5) or (ysum == 5)
