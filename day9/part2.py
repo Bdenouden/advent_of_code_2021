@@ -11,16 +11,9 @@ with open(sys.path[0] + '/input.txt') as f:
         sizeX = len(line.strip())
     sizeY = y
 
-# print(sizeX, sizeY)
-
-# if the check starts at 0,0 each node only needs to check x+1 and y+1 and then 
-# proceed until a low point is found or a previously checked point
-
 def findLowPoint(x,y):
-    # print(f"checking x,y {x},{y}; value:{hmap[(x, y)]['height']}")
     node = hmap.get((x,y), False)
     if(not node or node['checked']): # this node has been checked, no action required
-        # print("skipping!\n")
         return
     else:
         node['checked'] = True
@@ -38,18 +31,41 @@ def findLowPoint(x,y):
                 findLowPoint(x, y2)
 
         if(isLowPoint):
-            print(f"-- LOWPOINT -- x, y, h = {x}, {y}, {node['height']}")
+            # print(f"-- LOWPOINT -- x, y = ({x}, {y}), height = {node['height']}")
             lowPoints[(x,y)] = node['height']
 
-        # print()
+def findBasin(x,y, refVal, depth=0):
+    # print('| '*depth+f"- findBasin; x: {x}, y: {y}, ref: {refVal} ")
+    node = hmap.get((x,y), False)
+    found = set([(x,y)]) # = 1
+    for x2, y2 in [(x-1, y), (x+1, y), (x, y-1),(x, y+1)]:
+        nextNode = hmap.get((x2,y2),False)
+        if(nextNode and nextNode['height'] < 9 and (nextNode['height'] == refVal + 1)):
+            # print("| "*(depth+1) + f'ping ({x2}, {y2}, {nextNode["height"]})')
+            found = set.union(found, findBasin(x2, y2, nextNode['height'], depth + 1))
+        # else:
+            # print("| "*(depth+1) + f'---- ({x2}, {y2}, {hmap[(x2, y2)]["height"] if hmap.get((x2,y2), False) else False })')
+    # print("| "*(depth+1) + f"returning {found}")
+    # print("| "*(depth))
+    return found
+
+
+
 
 for y in range(0, sizeY-1):
     for x in range(0, sizeX-1):
-        # print(x,y)
         if(not hmap[(x, y)]['checked']):
-            findLowPoint(x,y)
+            findLowPoint(x,y)   
 
-# [print(p) for p in lowPoints.items()]  
-print(len(lowPoints))   
+# for (x,y), val in lowPoints.items():
+#     print(f"lowPoint:{x,y} basin size: {len(findBasin(x,y,val))}\n\n\n")
+
 risks = [val+1 for key, val in lowPoints.items()]
-print(f"risk sum: {sum(risks)}")     
+print(f"risk sum: {sum(risks)}")
+
+basins = [findBasin(x,y,val) for (x,y),val in lowPoints.items()]
+[print(b) for b in basins]
+basinSizes = [len(b) for b in basins]
+basinSizes.sort(reverse=True)
+print(basinSizes)
+print(basinSizes[0]*basinSizes[1]*basinSizes[2] )
