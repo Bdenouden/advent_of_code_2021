@@ -33,4 +33,4 @@ with open(sys.path[0] + '/input.txt') as f:
         if(result):
             scores.append(complete(result))
     scores.sort()
-    print(scores[int(len(scores)/2)])
+    print(scores[len(scores)//2])
