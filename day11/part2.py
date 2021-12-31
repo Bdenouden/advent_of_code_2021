@@ -1,4 +1,6 @@
 import sys
+import time
+start_time = time.time()
 
 dumbos = {
     # (x, y): energy
@@ -42,14 +44,14 @@ with open(sys.path[0] + '/input.txt') as f:
             dumbos[(x, y)] = int(val)
 
 
-
-
-# printMatrix()
-for step in range(100):
+for step in range(1000):
     flash = increaseAllEnergyByOne()
     flashes += len(flash)
     ripple(flash)
-    # print()
-    # print(f"after step {step+1}:")
-    # printMatrix()
-print( flashes)
+    # print(sum(dumbos.values()))
+    if(sum(dumbos.values())==0):
+        print("Solution found")
+        print(step+1)
+        break
+print('done')
+print("--- %s seconds ---" % (time.time() - start_time))
